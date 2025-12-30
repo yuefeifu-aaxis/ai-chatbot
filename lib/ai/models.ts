@@ -61,6 +61,20 @@ export const chatModels: ChatModel[] = [
     provider: "xai",
     description: "Fast with 30K context",
   },
+  // Alibaba
+  {
+    id: "alibaba/qwen-3-14b",
+    name: "Qwen 3 14B",
+    provider: "alibaba",
+    description: "High-performance model with 14B parameters",
+  },
+  // DeepSeek
+  {
+    id: "deepseek/deepseek-v3.2",
+    name: "DeepSeek V3.2",
+    provider: "deepseek",
+    description: "Advanced model with enhanced capabilities",
+  },
   // Reasoning models (extended thinking)
   {
     id: "anthropic/claude-3.7-sonnet-thinking",

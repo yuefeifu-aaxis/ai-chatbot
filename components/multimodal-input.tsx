@@ -479,6 +479,8 @@ function PureModelSelectorCompact({
     openai: "OpenAI",
     google: "Google",
     xai: "xAI",
+    alibaba: "Alibaba",
+    deepseek: "DeepSeek",
     reasoning: "Reasoning",
   };
 
