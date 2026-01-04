@@ -23,6 +23,8 @@ import {
   chat,
   type DBMessage,
   document,
+  embedding,
+  type Embedding,
   message,
   type Suggestion,
   stream,
@@ -597,6 +599,96 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
     throw new ChatSDKError(
       "bad_request:database",
       "Failed to get stream ids by chat id"
+    );
+  }
+}
+
+export async function saveEmbeddings({
+  embeddings,
+}: {
+  embeddings: Array<{
+    text: string;
+    vector: number[];
+    model: string;
+    dimension: string | null;
+    metadata: Record<string, any> | null;
+  }>;
+}) {
+  try {
+    const embeddingRecords = embeddings.map((emb) => ({
+      text: emb.text,
+      vector: emb.vector,
+      model: emb.model,
+      dimension: emb.dimension,
+      metadata: emb.metadata,
+      createdAt: new Date(),
+    }));
+
+    return await db.insert(embedding).values(embeddingRecords).returning();
+  } catch (_error) {
+    throw new ChatSDKError(
+      "bad_request:database",
+      "Failed to save embeddings"
+    );
+  }
+}
+
+export async function getEmbeddingsByText({
+  text,
+  limit = 10,
+}: {
+  text: string;
+  limit?: number;
+}) {
+  try {
+    return await db
+      .select()
+      .from(embedding)
+      .where(eq(embedding.text, text))
+      .limit(limit)
+      .orderBy(desc(embedding.createdAt));
+  } catch (_error) {
+    throw new ChatSDKError(
+      "bad_request:database",
+      "Failed to get embeddings by text"
+    );
+  }
+}
+
+export async function getAllEmbeddings({
+  model,
+  limit,
+}: {
+  model?: string;
+  limit?: number;
+}) {
+  try {
+    if (model) {
+      const query = db
+        .select()
+        .from(embedding)
+        .where(eq(embedding.model, model))
+        .orderBy(desc(embedding.createdAt));
+
+      if (limit) {
+        return await query.limit(limit);
+      }
+      return await query;
+    }
+
+    const query = db
+      .select()
+      .from(embedding)
+      .orderBy(desc(embedding.createdAt));
+
+    if (limit) {
+      return await query.limit(limit);
+    }
+    return await query;
+  } catch (_error) {
+    throw new ChatSDKError(
+      "bad_request:database",
+      "Failed to get all embeddings"
     );
   }
 }

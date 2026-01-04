@@ -168,3 +168,17 @@ export const stream = pgTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+export const embedding = pgTable("Embedding", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  text: text("text").notNull(),
+  vector: json("vector").notNull(),
+  model: varchar("model", { length: 100 })
+    .notNull()
+    .default("text-embedding-v4"),
+  dimension: text("dimension"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
+export type Embedding = InferSelectModel<typeof embedding>;
