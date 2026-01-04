@@ -17,8 +17,11 @@ import { entitlementsByUserType } from "@/lib/ai/entitlements";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { getLanguageModel } from "@/lib/ai/providers";
 import { createDocument } from "@/lib/ai/tools/create-document";
+import { embeddingTool } from "@/lib/ai/tools/embedding";
 import { getWeather } from "@/lib/ai/tools/get-weather";
+import { hybridSearchTool } from "@/lib/ai/tools/hybrid-search";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
+import { textSplitterTool } from "@/lib/ai/tools/text-splitter";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { isProductionEnvironment } from "@/lib/constants";
 import {
@@ -179,10 +182,12 @@ export async function POST(request: Request) {
           experimental_activeTools: isReasoningModel
             ? []
             : [
-                "getWeather",
-                "createDocument",
-                "updateDocument",
-                "requestSuggestions",
+                "embedding",
+                "hybridSearch",
+                // "getWeather",
+                // "createDocument",
+                // "updateDocument",
+                // "requestSuggestions",
               ],
           experimental_transform: isReasoningModel
             ? undefined
@@ -202,6 +207,9 @@ export async function POST(request: Request) {
               session,
               dataStream,
             }),
+            textSplitter: textSplitterTool,
+            embedding: embeddingTool,
+            hybridSearch: hybridSearchTool,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
